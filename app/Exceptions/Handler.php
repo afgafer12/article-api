@@ -2,7 +2,10 @@
 
 namespace App\Exceptions;
 
+use DivisionByZeroError;
+use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\JsonResponse;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -32,10 +35,38 @@ class Handler extends ExceptionHandler
      *
      * @return void
      */
-    public function register()
+    // public function register()
+    // {
+    //     $this->renderable(function (DivisionByZeroError $e) {
+    //         return response()->json([
+    //             'errors' => [
+    //                 "message" => [
+    //                     $e->getMessage()
+    //                 ]
+    //             ]
+    //         ])->setStatusCode(500);
+
+    //     });
+    //     $this->renderable(function (Exception $e) {
+    //         return response()->json([
+    //             'errors' => [
+    //                 "message" => [
+    //                     $e->getMessage()
+    //                 ]
+    //             ]
+    //         ])->setStatusCode(500);
+
+    //     });
+    // }
+
+    public function render($request, Throwable $e): JsonResponse
     {
-        $this->reportable(function (Throwable $e) {
-            //
-        });
+        return response()->json([
+            'errors' => [
+                "message" => [
+                    "Internal server error"
+                ]
+            ]
+        ])->setStatusCode(500);
     }
 }

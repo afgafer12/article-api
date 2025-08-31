@@ -22,6 +22,19 @@ class PostController extends Controller
         $posts = $qPosts->get();
         return  new PostCollection($posts);
     }
+
+    public function getPostsPage(int $limit, int $offset, Request $request){
+        $qPosts = Post::query();
+        if($request->status){
+            $qPosts->where('status', $request->status);
+        }
+
+        $page = floor($offset / $limit) + 1;
+        $request->merge(['page' => $page]);
+        $posts = $qPosts->paginate($limit);
+        return  new PostCollection($posts);
+    }
+
     public function getPost($id){
         $post = Post::find($id);
         if (!$post) {
@@ -48,6 +61,16 @@ class PostController extends Controller
     public function updatePost($id, PostRequest $request): PostResource
     {
         $post = Post::find($id);
+        if (!$post) {
+            throw new HttpResponseException(response()->json([
+                'errors' => [
+                    "message" => [
+                        "not found"
+                    ]
+                ]
+            ])->setStatusCode(404));
+        }
+        
         $post->title = $request->title;  
         $post->content = $request->content;  
         $post->category = $request->category;  
@@ -55,4 +78,40 @@ class PostController extends Controller
         $post->save();
         return new PostResource($post);
     }
+
+    public function updatePostStatus($id, Request $request): PostResource
+    {
+        $post = Post::find($id);
+        if (!$post) {
+            throw new HttpResponseException(response()->json([
+                'errors' => [
+                    "message" => [
+                        "not found"
+                    ]
+                ]
+            ])->setStatusCode(404));
+        }
+        $post->status = $request->status;  
+        $post->save();
+        return new PostResource($post);
+    }
+
+    public function deletePost($id)
+    {
+        $post = Post::find($id);
+        if (!$post) {
+            throw new HttpResponseException(response()->json([
+                'errors' => [
+                    "message" => [
+                        "not found"
+                    ]
+                ]
+            ])->setStatusCode(404));
+        }
+        $post->delete();
+        return response()->json([
+            'data' => true
+        ])->setStatusCode(200);
+    }
+
 }

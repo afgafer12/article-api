@@ -23,5 +23,6 @@ Route::prefix('/article')->controller(\App\Http\Controllers\Api\PostController::
     Route::get('/{limit}/{offset}', 'getPostsPage');
     Route::post('/', 'createPost');
     Route::put('/{id}', 'updatePost');
+    Route::patch('/{id}', 'updatePostStatus');
     Route::delete('/{id}', 'deletePost');
 });
