@@ -14,6 +14,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+Route::prefix('/article')->controller(\App\Http\Controllers\Api\PostController::class)->group(function () {
+    Route::get('/', 'getPosts');
+    Route::get('/{id}', 'getPost');
+    Route::get('/{limit}/{offset}', 'getPostsPage');
+    Route::post('/', 'createPost');
+    Route::put('/{id}', 'updatePost');
+    Route::delete('/{id}', 'deletePost');
 });
